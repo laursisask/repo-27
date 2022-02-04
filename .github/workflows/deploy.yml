@@ -12,7 +12,7 @@ on:
         default: 'no'
       excludeSubfolder:
         description: 'Exclude a subfolder from deletion'
-        required: true
+        required: false
         default: ''
 jobs:
   set-state:
