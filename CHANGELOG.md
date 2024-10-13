@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/laursisask/repo-27/compare/v1.0.0...1.1.0) (2024-10-13)
+
+
+### Features
+
+* Add tracing hook implementation ([#1](https://github.com/laursisask/repo-27/issues/1)) ([420630e](https://github.com/laursisask/repo-27/commit/420630e50c00cdfd17ccabd5e34b0b3744b5fe63))
+
 ## 1.0.0 (2024-04-05)
 
 
