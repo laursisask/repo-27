@@ -12,93 +12,13 @@
 <div class="col-content">
 <div class="tsd-page-title">
 <h2>@metamask/eth-simple-keyring</h2></div>
-<div class="tsd-panel tsd-typography"><a id="md:simple-keyring" class="tsd-anchor"></a><h1><a href="#md:simple-keyring">Simple Keyring</a></h1><blockquote>
-<p>[!WARNING]
-This package has been moved into a
-<a href="https://github.com/MetaMask/accounts/tree/main/packages/keyring-eth-simple">new monorepo</a>.
-This repository is no longer in use, and pull requests will no longer be accepted.</p>
-</blockquote>
-<p>A simple JS class wrapped around <a href="https://github.com/ethereumjs/ethereumjs-wallet">ethereumjs-wallet</a> designed to expose an interface common to many different signing strategies to be used in a <code>KeyringController</code>; such as the one used in <a href="https://metamask.io/">MetaMask</a></p>
-<a id="md:the-keyring-class-protocol" class="tsd-anchor"></a><h2><a href="#md:the-keyring-class-protocol">The Keyring Class Protocol</a></h2><p>One of the goals of this class is to allow developers to easily add new signing strategies to MetaMask. We call these signing strategies Keyrings, because they can manage multiple keys.</p>
-<a id="md:keyringtype" class="tsd-anchor"></a><h3><a href="#md:keyringtype">Keyring.type</a></h3><p>A class property that returns a unique string describing the Keyring.
-This is the only class property or method, the remaining methods are instance methods.</p>
-<a id="md:constructor-options-" class="tsd-anchor"></a><h3><a href="#md:constructor-options-">constructor( options )</a></h3><p>As a Javascript class, your Keyring object will be used to instantiate new Keyring instances using the new keyword. For example:</p>
-<pre><code><span class="hl-0">const</span><span class="hl-1"> </span><span class="hl-2">keyring</span><span class="hl-1"> = </span><span class="hl-0">new</span><span class="hl-1"> </span><span class="hl-3">YourKeyringClass</span><span class="hl-1">(</span><span class="hl-4">options</span><span class="hl-1">);</span>
-</code><button>Copy</button></pre>
-<p>The constructor currently receives an options object that will be defined by your keyring-building UI, once the user has gone through the steps required for you to fully instantiate a new keyring. For example, choosing a pattern for a vanity account, or entering a seed phrase.</p>
-<p>We haven&#39;t defined the protocol for this account-generating UI yet, so for now please ensure your Keyring behaves nicely when not passed any options object.</p>
-<a id="md:keyring-instance-methods" class="tsd-anchor"></a><h2><a href="#md:keyring-instance-methods">Keyring Instance Methods</a></h2><p>All below instance methods must return Promises to allow asynchronous resolution.</p>
-<a id="md:serialize" class="tsd-anchor"></a><h3><a href="#md:serialize">serialize()</a></h3><p>In this method, you must return any JSON-serializable JavaScript object that you like. It will be encoded to a string, encrypted with the user&#39;s password, and stored to disk. This is the same object you will receive in the deserialize() method, so it should capture all the information you need to restore the Keyring&#39;s state.</p>
-<a id="md:deserialize-object-" class="tsd-anchor"></a><h3><a href="#md:deserialize-object-">deserialize( object )</a></h3><p>As discussed above, the deserialize() method will be passed the JavaScript object that you returned when the serialize() method was called.</p>
-<a id="md:addaccounts-n--1-" class="tsd-anchor"></a><h3><a href="#md:addaccounts-n--1-">addAccounts( n = 1 )</a></h3><p>The addAccounts(n) method is used to inform your keyring that the user wishes to create a new account. You should perform whatever internal steps are needed so that a call to serialize() will persist the new account, and then return an array of the new account addresses.</p>
-<p>The method may be called with or without an argument, specifying the number of accounts to create. You should generally default to 1 per call.</p>
-<a id="md:getaccounts" class="tsd-anchor"></a><h3><a href="#md:getaccounts">getAccounts()</a></h3><p>When this method is called, you must return an array of hex-string addresses for the accounts that your Keyring is able to sign for.</p>
-<a id="md:signtransactionaddress-transaction" class="tsd-anchor"></a><h3><a href="#md:signtransactionaddress-transaction">signTransaction(address, transaction)</a></h3><p>This method will receive a hex-prefixed, all-lowercase address string for the account you should sign the incoming transaction with.</p>
-<p>For your convenience, the transaction is an instance of ethereumjs-tx, (<a href="https://github.com/ethereumjs/ethereumjs-tx">https://github.com/ethereumjs/ethereumjs-tx</a>) so signing can be as simple as:</p>
-<pre><code><span class="hl-4">transaction</span><span class="hl-1">.</span><span class="hl-3">sign</span><span class="hl-1">(</span><span class="hl-4">privateKey</span><span class="hl-1">)</span>
-</code><button>Copy</button></pre>
-<p>You must return a valid signed ethereumjs-tx (<a href="https://github.com/ethereumjs/ethereumjs-tx">https://github.com/ethereumjs/ethereumjs-tx</a>) object when complete, it can be the same transaction you received.</p>
-<a id="md:signmessageaddress-data" class="tsd-anchor"></a><h3><a href="#md:signmessageaddress-data">signMessage(address, data)</a></h3><p>The <code>eth_sign</code> method will receive the incoming data, already hashed, and must sign that hash, and then return the raw signed hash.</p>
-<a id="md:getencryptionpublickeyaddress" class="tsd-anchor"></a><h3><a href="#md:getencryptionpublickeyaddress">getEncryptionPublicKey(address)</a></h3><p>This provides the public key for encryption function.</p>
-<a id="md:decryptmessageaddress-data" class="tsd-anchor"></a><h3><a href="#md:decryptmessageaddress-data">decryptMessage(address, data)</a></h3><p>The <code>eth_decryptMessage</code> method will receive the incoming data in array format that returns <code>encrypt</code> function in <code>eth-sig-util</code> and must decrypt message, and then return the raw message.</p>
-<a id="md:exportaccountaddress" class="tsd-anchor"></a><h3><a href="#md:exportaccountaddress">exportAccount(address)</a></h3><p>Exports the specified account as a private key hex string.</p>
-<a id="md:removeaccountaddress" class="tsd-anchor"></a><h3><a href="#md:removeaccountaddress">removeAccount(address)</a></h3><p>removes the specified account from the list of accounts.</p>
-<a id="md:contributing" class="tsd-anchor"></a><h2><a href="#md:contributing">Contributing</a></h2><a id="md:setup" class="tsd-anchor"></a><h3><a href="#md:setup">Setup</a></h3><ul>
-<li>Install <a href="https://nodejs.org">Node.js</a> version 16 or greater<ul>
-<li>If you are using <a href="https://github.com/creationix/nvm#installation">nvm</a> (recommended) running <code>nvm use</code> will automatically choose the right node version for you.</li>
-</ul>
-</li>
-<li>Install <a href="https://yarnpkg.com/getting-started/install">Yarn v3</a></li>
-<li>Run <code>yarn install</code> to install dependencies and run any required post-install scripts</li>
-</ul>
-<p>-- This package implicitly relies on Buffer to be present (meaning that if someone wants to use this in a browser context, they need to supply a polyfill for Buffer or use the <code>buffer</code> package)</p>
-<a id="md:testing-and-linting" class="tsd-anchor"></a><h3><a href="#md:testing-and-linting">Testing and Linting</a></h3><p>Run <code>yarn test</code> to run the tests once. To run tests on file changes, run <code>yarn test:watch</code>.</p>
-<p>Run <code>yarn lint</code> to run the linter, or run <code>yarn lint:fix</code> to run the linter and fix any automatically fixable issues.</p>
-<a id="md:release-amp-publishing" class="tsd-anchor"></a><h3><a href="#md:release-amp-publishing">Release &amp; Publishing</a></h3><p>The project follows the same release process as the other libraries in the MetaMask organization. The GitHub Actions <a href="https://github.com/MetaMask/action-create-release-pr"><code>action-create-release-pr</code></a> and <a href="https://github.com/MetaMask/action-publish-release"><code>action-publish-release</code></a> are used to automate the release process; see those repositories for more information about how they work.</p>
-<ol>
-<li><p>Choose a release version.</p>
-<ul>
-<li>The release version should be chosen according to SemVer. Analyze the changes to see whether they include any breaking changes, new features, or deprecations, then choose the appropriate SemVer version. See <a href="https://semver.org/">the SemVer specification</a> for more information.</li>
-</ul>
-</li>
-<li><p>If this release is backporting changes onto a previous release, then ensure there is a major version branch for that version (e.g. <code>1.x</code> for a <code>v1</code> backport release).</p>
-<ul>
-<li>The major version branch should be set to the most recent release with that major version. For example, when backporting a <code>v1.0.2</code> release, you&#39;d want to ensure there was a <code>1.x</code> branch that was set to the <code>v1.0.1</code> tag.</li>
-</ul>
-</li>
-<li><p>Trigger the <a href="https://docs.github.com/en/actions/reference/events-that-trigger-workflows#workflow_dispatch"><code>workflow_dispatch</code></a> event <a href="https://docs.github.com/en/actions/managing-workflow-runs/manually-running-a-workflow">manually</a> for the <code>Create Release Pull Request</code> action to create the release PR.</p>
-<ul>
-<li>For a backport release, the base branch should be the major version branch that you ensured existed in step 2. For a normal release, the base branch should be the main branch for that repository (which should be the default value).</li>
-<li>This should trigger the <a href="https://github.com/MetaMask/action-create-release-pr"><code>action-create-release-pr</code></a> workflow to create the release PR.</li>
-</ul>
-</li>
-<li><p>Update the changelog to move each change entry into the appropriate change category (<a href="https://keepachangelog.com/en/1.0.0/#types">See here</a> for the full list of change categories, and the correct ordering), and edit them to be more easily understood by users of the package.</p>
-<ul>
-<li>Generally any changes that don&#39;t affect consumers of the package (e.g. lockfile changes or development environment changes) are omitted. Exceptions may be made for changes that might be of interest despite not having an effect upon the published package (e.g. major test improvements, security improvements, improved documentation, etc.).</li>
-<li>Try to explain each change in terms that users of the package would understand (e.g. avoid referencing internal variables/concepts).</li>
-<li>Consolidate related changes into one change entry if it makes it easier to explain.</li>
-<li>Run <code>yarn auto-changelog validate --rc</code> to check that the changelog is correctly formatted.</li>
-</ul>
-</li>
-<li><p>Review and QA the release.</p>
-<ul>
-<li>If changes are made to the base branch, the release branch will need to be updated with these changes and review/QA will need to restart again. As such, it&#39;s probably best to avoid merging other PRs into the base branch while review is underway.</li>
-</ul>
-</li>
-<li><p>Squash &amp; Merge the release.</p>
-<ul>
-<li>This should trigger the <a href="https://github.com/MetaMask/action-publish-release"><code>action-publish-release</code></a> workflow to tag the final release commit and publish the release on GitHub.</li>
-</ul>
-</li>
-<li><p>Publish the release on npm.</p>
-<ul>
-<li>Be very careful to use a clean local environment to publish the release, and follow exactly the same steps used during CI.</li>
-<li>Use <code>npm publish --dry-run</code> to examine the release contents to ensure the correct files are included. Compare to previous releases if necessary (e.g. using <code>https://unpkg.com/browse/[package name]@[package version]/</code>).</li>
-<li>Once you are confident the release contents are correct, publish the release using <code>npm publish</code>.</li>
-</ul>
-</li>
-</ol>
-</div></div>
+<section class="tsd-panel-group tsd-index-group">
+<section class="tsd-panel tsd-index-panel">
+<h3 class="tsd-index-heading uppercase">Index</h3>
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading">Classes</h3>
+<div class="tsd-index-list"><a href="classes/default.html" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>default</span></a>
+</div></section></section></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -112,40 +32,7 @@ This is the only class property or method, the remaining methods are instance me
 <li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><use href="#icon-checkbox"></use></svg><span>Inherited</span></label></li>
 <li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><use href="#icon-checkbox"></use></svg><span>External</span></label></li></ul></form></div>
 <div class="tsd-theme-toggle">
-<h4 class="uppercase">Theme</h4><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div>
-<details open class="tsd-index-accordion tsd-page-navigation"><summary class="tsd-accordion-summary">
-<h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><use href="#icon-chevronDown"></use></svg>On This Page</h3></summary>
-<div class="tsd-accordion-details">
-<ul>
-<li>
-<ul>
-<li><a href="#md:simple-keyring"><span>Simple <wbr/>Keyring</span></a></li>
-<li>
-<ul>
-<li><a href="#md:the-keyring-class-protocol"><span>The <wbr/>Keyring <wbr/>Class <wbr/>Protocol</span></a></li>
-<li>
-<ul>
-<li><a href="#md:keyringtype"><span>Keyring.type</span></a></li>
-<li><a href="#md:constructor-options-"><span>constructor( options )</span></a></li></ul></li>
-<li><a href="#md:keyring-instance-methods"><span>Keyring <wbr/>Instance <wbr/>Methods</span></a></li>
-<li>
-<ul>
-<li><a href="#md:serialize"><span>serialize()</span></a></li>
-<li><a href="#md:deserialize-object-"><span>deserialize( object )</span></a></li>
-<li><a href="#md:addaccounts-n--1-"><span>add<wbr/>Accounts( n = 1 )</span></a></li>
-<li><a href="#md:getaccounts"><span>get<wbr/>Accounts()</span></a></li>
-<li><a href="#md:signtransactionaddress-transaction"><span>sign<wbr/>Transaction(address, transaction)</span></a></li>
-<li><a href="#md:signmessageaddress-data"><span>sign<wbr/>Message(address, data)</span></a></li>
-<li><a href="#md:getencryptionpublickeyaddress"><span>get<wbr/>Encryption<wbr/>Public<wbr/>Key(address)</span></a></li>
-<li><a href="#md:decryptmessageaddress-data"><span>decrypt<wbr/>Message(address, data)</span></a></li>
-<li><a href="#md:exportaccountaddress"><span>export<wbr/>Account(address)</span></a></li>
-<li><a href="#md:removeaccountaddress"><span>remove<wbr/>Account(address)</span></a></li></ul></li>
-<li><a href="#md:contributing"><span>Contributing</span></a></li>
-<li>
-<ul>
-<li><a href="#md:setup"><span>Setup</span></a></li>
-<li><a href="#md:testing-and-linting"><span>Testing and <wbr/>Linting</span></a></li>
-<li><a href="#md:release-amp-publishing"><span>Release &amp; <wbr/>Publishing</span></a></li></ul></li></ul></li></ul></li></ul></div></details></div>
+<h4 class="uppercase">Theme</h4><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div></div>
 <div class="site-menu">
 <nav class="tsd-navigation"><a href="modules.html" class="current"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1"></use></svg><span>@metamask/eth-simple-keyring</span></a>
 <ul class="tsd-small-nested-navigation" id="tsd-nav-container" data-base=".">
